@@ -1,0 +1,54 @@
+[
+  {
+    "id": "_evt001",
+    "title": "Organic Fertilizer Application",
+    "date": "2026-04-16",
+    "type": "task",
+    "icon": "🌱",
+    "label": "Organic Fertilizer Application",
+    "notes": "Applying compost to North Field",
+    "userId": "user_farmer1",
+    "createdAt": "2026-04-14T00:00:00.000Z"
+  },
+  {
+    "id": "_evt002",
+    "title": "Soil Sample Collection",
+    "date": "2026-04-19",
+    "type": "task",
+    "icon": "🧪",
+    "label": "Soil Sample Collection",
+    "notes": "Sending samples to KV Ag-Lab",
+    "userId": "user_farmer1",
+    "createdAt": "2026-04-14T00:00:00.000Z"
+  },
+  {
+    "id": "_evt003",
+    "title": "Wheat Harvest Preparation",
+    "date": "2026-04-22",
+    "type": "harvest",
+    "icon": "🌾",
+    "label": "Wheat Harvest Preparation",
+    "userId": "user_farmer1",
+    "createdAt": "2026-04-14T00:00:00.000Z"
+  },
+  {
+    "id": "_evt004",
+    "title": "Veterinary Inspection",
+    "date": "2026-04-20",
+    "type": "other",
+    "icon": "📅",
+    "label": "Veterinary Inspection",
+    "userId": "user_farmer2",
+    "createdAt": "2026-04-14T00:00:00.000Z"
+  },
+  {
+    "id": "_naydffs",
+    "title": "Updated Test Event",
+    "date": "2026-04-14",
+    "type": "other",
+    "icon": "📅",
+    "label": "Updated Test Event",
+    "userId": "user_farmer1",
+    "createdAt": "2026-04-14T03:35:07.444Z"
+  }
+]

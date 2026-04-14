@@ -1,0 +1,7 @@
+node_modules/
+.vs/
+.env
+*.fixed
+fix*.js
+patch*.js
+*.log

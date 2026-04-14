@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Farm MRL Portal — Track chemical usage, ensure MRL compliance, and manage crops & livestock with data-driven safety recommendations." />
+  <title>Farm MRL Portal — Smart Chemical Safety Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- Toast notifications -->
+<div class="toast-container" id="toastContainer"></div>
+<!-- Add/Edit Calendar Event Modal -->
+<div class="modal-overlay" id="calEventModal" onclick="closeModalOverlay(event, 'calEventModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📅 Calendar Event</div>
+      <button class="modal-close" onclick="closeModal('calEventModal')">✕</button>
+    </div>
+    <input type="hidden" id="calEventId">
+    <div class="form-group">
+      <label class="form-label">Event Title</label>
+      <input class="form-input" type="text" id="calEventTitle" placeholder="e.g. Tomato Harvest, Soil Prep..." />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" id="calEventDate" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Event Type</label>
+        <select class="form-select" id="calEventType">
+          <option value="harvest">🌾 Harvest</option>
+          <option value="withdraw">⏳ Withdrawal / Safety</option>
+          <option value="task">🚜 Farm Task</option>
+          <option value="other">📅 Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('calEventModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCalendarEvent()">💾 Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Mobile sidebar toggle -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Menu">☰</button>
+
+<!-- App Shell -->
+<div class="app-shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-logo" style="cursor: pointer;" onclick="navigate('dashboard')">
+      <div class="sidebar-logo-icon">🌿</div>
+      <div class="sidebar-logo-text">
+        <div class="sidebar-logo-title">Farm MRL Portal</div>
+        <div class="sidebar-logo-sub">Chemical Safety Platform</div>
+      </div>
+    </div>
+
+    <!-- Farm Health Score -->
+    <div class="farm-score-badge" onclick="navigate('dashboard')" title="View Dashboard">
+      <div class="score-ring">
+        <svg width="42" height="42" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="17" fill="none" stroke="rgba(34,197,94,0.15)" stroke-width="3.5"/>
+          <circle id="scoreCircle" cx="21" cy="21" r="17" fill="none" stroke="#22c55e"
+            stroke-width="3.5" stroke-linecap="round"
+            stroke-dasharray="0 107" class="score-circle-fill"
+            style="transition: stroke-dasharray 1s ease;"/>
+        </svg>
+        <span class="score-ring-num" id="scoreNum">–</span>
+      </div>
+      <div class="score-info">
+        <div class="score-label">Farm Health Score</div>
+        <div class="score-grade" id="scoreGrade">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" data-page="alerts" onclick="navigate('alerts')">
+        <span class="nav-icon">🔔</span> Alert Center
+        <span class="nav-badge" id="alertBadge">0</span>
+      </div>
+      <!-- Admin only -->
+      <div class="nav-item nav-admin-only" data-page="admin" onclick="navigate('admin')" style="display:none;">
+        <span class="nav-icon">⚙️</span> Admin Panel
+      </div>
+
+      <div class="nav-section-label">Chemical Management</div>
+      <div class="nav-item" data-page="logger" onclick="navigate('logger')">
+        <span class="nav-icon">📋</span> Usage Logger
+      </div>
+      <div class="nav-item" data-page="checker" onclick="navigate('checker')">
+        <span class="nav-icon">⚠️</span> MRL Risk Checker
+      </div>
+      <div class="nav-item" data-page="advisor" onclick="navigate('advisor')">
+        <span class="nav-icon">🧠</span> Safety Advisor
+      </div>
+      <div class="nav-item" data-page="encyclopedia" onclick="navigate('encyclopedia')">
+        <span class="nav-icon">🔬</span> Chemical Encyclopedia
+      </div>
+
+      <div class="nav-section-label">Farm Management</div>
+      <div class="nav-item" data-page="crops" onclick="navigate('crops')">
+        <span class="nav-icon">🌾</span> Crop Manager
+      </div>
+      <div class="nav-item" data-page="animals" onclick="navigate('animals')">
+        <span class="nav-icon">🐄</span> Animal Tracker
+      </div>
+      <div class="nav-item" data-page="calendar" onclick="navigate('calendar')">
+        <span class="nav-icon">📅</span> Harvest Calendar
+      </div>
+
+      <div class="nav-section-label">Analytics</div>
+      <div class="nav-item" data-page="reports" onclick="navigate('reports')">
+        <span class="nav-icon">📊</span> Reports
+      </div>
+    </nav>
+
+    <!-- User profile shortcut -->
+    <div class="farm-score-badge" onclick="navigate('profile')" style="cursor:pointer;" title="My Profile">
+      <div style="width:42px;height:42px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;" id="userAvatarSidebar">👤</div>
+      <div class="score-info">
+        <div class="score-label">Signed in as</div>
+        <div class="score-grade" id="userNameSidebar" style="font-size:13px;">Loading…</div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <button class="footer-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
+        🌙 Dark
+      </button>
+      <button class="footer-btn" onclick="logout()" title="Sign out" style="color:var(--danger);">
+        🚪 Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="pageTitle">Dashboard</div>
+        <div class="topbar-subtitle" id="pageSubtitle">Welcome back — here's your farm at a glance</div>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbarDate"></span>
+        <!-- User info chip -->
+        <div style="display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer;" onclick="navigate('profile')" title="My Profile">
+          <span id="topbarAvatar" style="font-size:18px;">👤</span>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-primary);" id="topbarUserName">Loading…</div>
+            <div style="font-size:10px;color:var(--text-muted);" id="topbarUserRole"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('logModal')" id="topbarLogBtn">
+          + Log Usage
+        </button>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ══════════════════════════════════════
+           PAGE: DASHBOARD
+      ══════════════════════════════════════ -->
+      <div class="page active" id="page-dashboard">
+        <!-- Urgent alert banner -->
+        <div id="urgentBanner"></div>
+
+        <!-- Stat Grid -->
+        <div class="stat-grid" id="statGrid"></div>
+
+        <!-- Main dashboard grid -->
+        <div class="grid-2">
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-title"><span>⚡</span> Recent Logs</div>
+            <div class="activity-list" id="recentActivity">
+              <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <div class="empty-title">No logs yet</div>
+                <div class="empty-sub">Add your first chemical usage log</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert Summary -->
+          <div class="card">
+            <div class="card-title"><span>🔔</span> Active Alerts</div>
+            <div id="alertSummaryList"></div>
+          </div>
+        </div>
+
+        <div class="mt-4 grid-2">
+          <!-- Compliance snapshot -->
+          <div class="chart-wrapper">
+            <div class="card-title" style="margin-bottom:12px"><span>📊</span> MRL Compliance Overview</div>
+            <canvas id="dashPieChart"></canvas>
+          </div>
+          <!-- Weekly trend -->
+          <div class="chart-wrapper">
+            <div class="card-title" style="margin-bottom:12px"><span>📈</span> Usage Trend (7 days)</div>
+            <canvas id="dashLineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: ALERT CENTER
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-alerts">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Smart Alert Center</div>
+            <div class="section-sub">Prioritized safety reminders for your farm</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="dismissAllAlerts()">✓ Dismiss All</button>
+        </div>
+        <div id="alertCenterList"></div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: USAGE LOGGER
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-logger">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Usage Log</div>
+            <div class="section-sub">All recorded chemical &amp; medicine applications</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('logModal')">+ New Log</button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="table-wrapper mb-4">
+          <div class="table-header" style="gap:10px; flex-wrap:wrap;">
+            <div class="table-search" style="display:flex; align-items:center; gap:8px; max-width:260px;">
+              <span>🔍</span>
+              <input id="logSearch" type="text" placeholder="Search logs…" oninput="filterLogs()" />
+            </div>
+            <select class="form-select" style="max-width:160px;" id="logFilterType" onchange="filterLogs()">
+              <option value="">All Types</option>
+              <option value="crop">Crop treatments</option>
+              <option value="animal">Animal medicines</option>
+            </select>
+            <select class="form-select" style="max-width:160px;" id="logFilterStatus" onchange="filterLogs()">
+              <option value="">All Statuses</option>
+              <option value="safe">✅ Safe</option>
+              <option value="warning">⚠️ Warning</option>
+              <option value="danger">❌ Unsafe</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="exportCSV()">📤 Export CSV</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Chemical / Medicine</th>
+                  <th>Dosage</th>
+                  <th>Target</th>
+                  <th>MRL Status</th>
+                  <th>Withdrawal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="logTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="logEmptyState" class="empty-state hidden">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">No logs found</div>
+          <div class="empty-sub">Try adjusting your filters or add a new log</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: MRL RISK CHECKER
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-checker">
+        <div class="grid-2" style="align-items:start;">
+          <!-- Quick Scan Panel -->
+          <div>
+            <div class="quick-scan-box">
+              <div style="font-size:13px; color:var(--text-muted); margin-bottom:4px;">INSTANT SCAN</div>
+              <h2 style="font-size:22px; font-weight:800; margin-bottom:20px;">MRL Risk Checker</h2>
+
+              <div class="form-group">
+                <label class="form-label">Chemical / Medicine</label>
+                <select class="form-select" id="checkChem" onchange="runQuickScan()">
+                  <option value="">— Select chemical —</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Dosage Amount</label>
+                  <input class="form-input" type="number" id="checkDose" placeholder="e.g. 2.5" oninput="runQuickScan()" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Unit</label>
+                  <select class="form-select" id="checkUnit" onchange="runQuickScan()">
+                    <option>mg/kg</option>
+                    <option>ppb</option>
+                    <option>ppm</option>
+                    <option>ml/L</option>
+                    <option>g/ha</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Application Target</label>
+                <div class="toggle-group">
+                  <div class="toggle-option active" id="checkTypeCrop" onclick="setCheckType('crop')">🌾 Crop</div>
+                  <div class="toggle-option" id="checkTypeAnimal" onclick="setCheckType('animal')">🐄 Animal</div>
+                </div>
+              </div>
+
+              <!-- Risk Display -->
+              <div class="risk-display risk-neutral-display" id="riskDisplay">
+                <div class="risk-display-icon" id="riskIcon">❓</div>
+                <div class="risk-display-label" id="riskLabel">Enter Details</div>
+              </div>
+
+              <div id="riskDetails" style="text-align:left; margin-top:10px;"></div>
+            </div>
+          </div>
+
+          <!-- Risk History -->
+          <div>
+            <div class="card">
+              <div class="card-title"><span>📜</span> Check History</div>
+              <div id="checkHistory">
+                <div class="empty-state" style="padding:30px 0;">
+                  <div class="empty-icon">🔍</div>
+                  <div class="empty-title">No checks yet</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mt-4">
+              <div class="card-title"><span>📏</span> MRL Reference Table</div>
+              <div style="overflow-x:auto; max-height:300px; overflow-y:auto;">
+                <table class="data-table" id="mrlRefTable">
+                  <thead>
+                    <tr><th>Chemical</th><th>Target</th><th>MRL Limit</th><th>W. Days</th></tr>
+                  </thead>
+                  <tbody id="mrlRefBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: SAFETY ADVISOR
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-advisor">
+        <div class="grid-2" style="align-items:start;">
+          <div>
+            <div class="card">
+              <div class="card-title"><span>🧠</span> Safety Advisor</div>
+              <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">
+                Get intelligent recommendations on withdrawal periods, safer alternatives, and dosage guidance.
+              </p>
+              <div class="form-group">
+                <label class="form-label">Select Chemical / Medicine</label>
+                <select class="form-select" id="advisorChem">
+                  <option value="">— Choose chemical —</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Application Type</label>
+                <div class="toggle-group">
+                  <div class="toggle-option active" id="advTypeCrop" onclick="setAdvisorType('crop')">🌾 Crop</div>
+                  <div class="toggle-option" id="advTypeAnimal" onclick="setAdvisorType('animal')">🐄 Animal</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Your Concern (optional)</label>
+                <select class="form-select" id="advisorConcern">
+                  <option value="general">General advice</option>
+                  <option value="withdrawal">Withdrawal period</option>
+                  <option value="alternatives">Safer alternatives</option>
+                  <option value="overdose">Overdose risk</option>
+                  <option value="combination">Chemical combinations</option>
+                </select>
+              </div>
+              <button class="btn btn-primary w-full" onclick="runAdvisor()" style="margin-top:8px;">
+                🧠 Get Recommendations
+              </button>
+            </div>
+
+            <!-- Overuse detection -->
+            <div class="card mt-4">
+              <div class="card-title"><span>⚡</span> Overuse Detection</div>
+              <div id="overuseList"></div>
+            </div>
+          </div>
+
+          <!-- System Response -->
+          <div>
+            <div id="advisorOutput">
+              <div class="quick-scan-box" style="padding:40px;">
+                <div style="font-size:48px; margin-bottom:12px;">🧠</div>
+                <div style="font-size:16px; font-weight:600; color:var(--text-muted);">
+                  Safety Engine Ready
+                </div>
+                <div style="font-size:13px; color:var(--text-disabled); margin-top:6px;">
+                  Select a chemical and click "Get Recommendations" to receive personalized safety recommendations.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: CHEMICAL ENCYCLOPEDIA
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-encyclopedia">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Chemical Encyclopedia</div>
+            <div class="section-sub">Complete MRL reference database for all tracked chemicals</div>
+          </div>
+          <div class="table-search" style="display:flex; align-items:center; gap:8px; max-width:280px;">
+            <span>🔍</span>
+            <input type="text" id="encSearch" placeholder="Search chemicals…" oninput="filterEncyclopedia()" />
+          </div>
+        </div>
+
+        <!-- Filter tabs -->
+        <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
+          <button class="chart-period-btn active" onclick="filterEncByType('all', this)" id="encAll">All</button>
+          <button class="chart-period-btn" onclick="filterEncByType('crop', this)">🌾 Crop Pesticides</button>
+          <button class="chart-period-btn" onclick="filterEncByType('animal', this)">🐄 Animal Medicines</button>
+          <button class="chart-period-btn" onclick="filterEncByType('both', this)">🔄 Multi-purpose</button>
+        </div>
+
+        <div id="encyclopediaGrid" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: CROP MANAGER
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-crops">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Crop Manager</div>
+            <div class="section-sub">Track growth stages, pesticide history, and harvest safety</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('cropModal')">+ Add Crop</button>
+        </div>
+        <div class="grid-auto" id="cropGrid"></div>
+        <div id="cropEmpty" class="empty-state hidden">
+          <div class="empty-icon">🌾</div>
+          <div class="empty-title">No crops added yet</div>
+          <div class="empty-sub">Add your first crop field to start tracking</div>
+          <button class="btn btn-primary" style="margin-top:12px;" onclick="openModal('cropModal')">+ Add First Crop</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: ANIMAL TRACKER
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-animals">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Animal Tracker</div>
+            <div class="section-sub">Monitor livestock health, medicines, and withdrawal periods</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('animalModal')">+ Add Animal</button>
+        </div>
+        <div class="animal-grid" id="animalGrid"></div>
+        <div id="animalEmpty" class="empty-state hidden">
+          <div class="empty-icon">🐄</div>
+          <div class="empty-title">No animals tracked yet</div>
+          <div class="empty-sub">Add your first animal or herd to start monitoring</div>
+          <button class="btn btn-primary" style="margin-top:12px;" onclick="openModal('animalModal')">+ Add First Animal</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: HARVEST CALENDAR
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-calendar">
+        <div class="grid-2" style="align-items:start;">
+          <div>
+            <div class="card">
+              <div class="section-header">
+                <div class="card-title" style="margin-bottom:0;"><span>📅</span> <span id="calMonthLabel"></span></div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-ghost btn-icon btn-sm" onclick="prevCalMonth()">◀</button>
+                  <button class="btn btn-ghost btn-icon btn-sm" onclick="nextCalMonth()">▶</button>
+                </div>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+              <div class="cal-legend">
+                <div class="cal-legend-item">
+                  <div class="cal-legend-dot" style="background:var(--safe-bg); border:1px solid var(--safe);"></div> Safe Harvest
+                </div>
+                <div class="cal-legend-item">
+                  <div class="cal-legend-dot" style="background:var(--warning-bg); border:1px solid var(--warning);"></div> Withdrawal Period
+                </div>
+                <div class="cal-legend-item">
+                  <div class="cal-legend-dot" style="background:var(--danger-bg); border:1px solid var(--danger);"></div> Not Safe Yet
+                </div>
+                <div class="cal-legend-item">
+                  <div class="cal-legend-dot" style="background:var(--accent-dim); border:1px solid var(--accent);"></div> Today
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="card-title"><span>🗓️</span> Upcoming Events</div>
+              <div id="calendarEvents"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: ADMIN PANEL
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-admin">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Admin Panel</div>
+            <div class="section-sub">Manage users, view platform stats, control access</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addUserModal')">+ Add User</button>
+        </div>
+        <!-- Platform stats -->
+        <div class="stat-grid" id="adminStatGrid" style="margin-bottom:24px;"></div>
+        <!-- Users table -->
+        <div class="table-wrapper">
+          <div class="table-header">
+            <div style="font-size:14px;font-weight:700;">👥 All Users</div>
+            <div class="table-search" style="display:flex;align-items:center;gap:8px;max-width:240px;">
+              <span>🔍</span><input type="text" id="adminUserSearch" placeholder="Search users…" oninput="filterAdminUsers()" />
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="adminUsersTable">
+              <thead><tr><th>User</th><th>Username</th><th>Role</th><th>Farm</th><th>Logs</th><th>Crops</th><th>Animals</th><th>Last Active</th><th>Actions</th></tr></thead>
+              <tbody id="adminUsersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: USER PROFILE
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-profile">
+        <div style="max-width:640px;">
+          <div class="card" style="margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;">
+              <div style="width:72px;height:72px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;" id="profileAvatar">👤</div>
+              <div>
+                <div style="font-size:20px;font-weight:800;" id="profileName">—</div>
+                <div style="font-size:13px;color:var(--text-muted);" id="profileRole">—</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;" id="profileJoined">—</div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="card-title"><span>✏️</span> Edit Profile</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input class="form-input" type="text" id="profileEditName" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Farm Name</label>
+                <input class="form-input" type="text" id="profileEditFarm" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-input" type="email" id="profileEditEmail" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input class="form-input" type="text" id="profileEditPhone" />
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><span>🔑</span> Change Password</div>
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input class="form-input" type="password" id="profileNewPwd" placeholder="Min. 6 characters" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm Password</label>
+              <input class="form-input" type="password" id="profileConfirmPwd" placeholder="Repeat new password" />
+            </div>
+            <button class="btn btn-secondary" onclick="savePassword()">🔒 Update Password</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: REPORTS
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-reports">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Reports &amp; Analytics</div>
+            <div class="section-sub">Compliance trends, usage summaries, and risk breakdowns</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="chart-period-btn active" onclick="setPeriod('7d', this)">7D</button>
+            <button class="chart-period-btn" onclick="setPeriod('30d', this)">30D</button>
+            <button class="chart-period-btn" onclick="setPeriod('90d', this)">90D</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportCSV()">📤 CSV</button>
+          </div>
+        </div>
+
+        <!-- Report stat cards -->
+        <div class="stat-grid" id="reportStatGrid" style="margin-bottom:24px;"></div>
+
+        <div class="grid-2 mb-4">
+          <div class="chart-wrapper">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <div class="card-title" style="margin:0;"><span>📈</span> Usage Over Time</div>
+            </div>
+            <canvas id="usageTrendChart"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <div class="card-title" style="margin-bottom:14px;"><span>🎯</span> MRL Compliance Breakdown</div>
+            <canvas id="compliancePieChart"></canvas>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="chart-wrapper">
+            <div class="card-title" style="margin-bottom:14px;"><span>🧪</span> Top Chemicals Used</div>
+            <canvas id="topChemChart"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-title"><span>📋</span> Detailed Log Summary</div>
+            <div style="overflow-x:auto; max-height:280px; overflow-y:auto;">
+              <table class="data-table" id="reportSummaryTable">
+                <thead>
+                  <tr>
+                    <th>Chemical</th>
+                    <th>Uses</th>
+                    <th>Avg Dosage</th>
+                    <th>Compliance</th>
+                  </tr>
+                </thead>
+                <tbody id="reportSummaryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance heatmap -->
+        <div class="card mt-4">
+          <div class="card-title"><span>🗺️</span> Usage Heatmap — Last 52 Weeks</div>
+          <div id="heatmapLegend" style="display:flex; gap:6px; align-items:center; margin-bottom:8px; font-size:11px; color:var(--text-muted);">
+            Less <div style="width:10px;height:10px;border-radius:2px;background:var(--bg-input);"></div>
+            <div style="width:10px;height:10px;border-radius:2px;background:rgba(34,197,94,0.2);"></div>
+            <div style="width:10px;height:10px;border-radius:2px;background:rgba(34,197,94,0.5);"></div>
+            <div style="width:10px;height:10px;border-radius:2px;background:rgba(34,197,94,0.8);"></div>
+            <div style="width:10px;height:10px;border-radius:2px;background:rgba(34,197,94,1);"></div> More
+          </div>
+          <div class="heatmap-grid" id="heatmapGrid"></div>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- Log Usage Modal -->
+<div class="modal-overlay" id="logModal" onclick="closeModalOverlay(event, 'logModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📋 Log Chemical Usage</div>
+      <button class="modal-close" onclick="closeModal('logModal')">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Chemical / Medicine Name</label>
+      <select class="form-select" id="logChem">
+        <option value="">— Select from database —</option>
+        <option value="__custom__">✏️ Enter custom name…</option>
+      </select>
+    </div>
+    <div class="form-group" id="logCustomChemGroup" style="display:none;">
+      <label class="form-label">Custom Chemical Name</label>
+      <input class="form-input" type="text" id="logCustomChem" placeholder="Enter chemical name…" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Dosage Amount</label>
+        <input class="form-input" type="number" id="logDose" placeholder="e.g. 2.5" oninput="previewLogRisk()" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Unit</label>
+        <select class="form-select" id="logUnit">
+          <option>mg/kg</option>
+          <option>ppb</option>
+          <option>ppm</option>
+          <option>ml/L</option>
+          <option>g/ha</option>
+          <option>IU/kg</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date of Application</label>
+        <input class="form-input" type="date" id="logDate" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Batch / Field ID</label>
+        <input class="form-input" type="text" id="logBatch" placeholder="e.g. Field-A1" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Treatment Target</label>
+      <div class="toggle-group">
+        <div class="toggle-option active" id="logTypeCrop" onclick="setLogType('crop')">🌾 Crop / Plant</div>
+        <div class="toggle-option" id="logTypeAnimal" onclick="setLogType('animal')">🐄 Animal / Livestock</div>
+      </div>
+    </div>
+
+    <div class="form-group" id="logCropGroup">
+      <label class="form-label">Crop Type</label>
+      <input class="form-input" type="text" id="logCropType" placeholder="e.g. Wheat, Tomato, Rice…" oninput="suggestCrop(this.value)" />
+      <div id="cropSuggestions" style="display:none;"></div>
+    </div>
+
+    <div class="form-group" id="logAnimalGroup" style="display:none;">
+      <label class="form-label">Animal ID / Herd Name</label>
+      <input class="form-input" type="text" id="logAnimalId" placeholder="e.g. COW-042, Hen-House-B…" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="logNotes" placeholder="Any additional observations…"></textarea>
+    </div>
+
+    <!-- Live risk preview -->
+    <div id="logRiskPreview" style="display:none; margin-bottom:16px;"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('logModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLog()">💾 Save Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Crop Modal -->
+<div class="modal-overlay" id="cropModal" onclick="closeModalOverlay(event, 'cropModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🌾 Add Crop Field</div>
+      <button class="modal-close" onclick="closeModal('cropModal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Crop Name</label>
+      <input class="form-input" type="text" id="cropName" placeholder="e.g. Wheat, Tomato, Soybean…" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Variety / Strain</label>
+        <input class="form-input" type="text" id="cropVariety" placeholder="e.g. HD-2967" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Field Area</label>
+        <input class="form-input" type="text" id="cropArea" placeholder="e.g. 2.5 acres" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Planting Date</label>
+        <input class="form-input" type="date" id="cropPlantDate" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Expected Harvest</label>
+        <input class="form-input" type="date" id="cropHarvestDate" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Growth Stage</label>
+      <select class="form-select" id="cropStage">
+        <option value="seeding">🌱 Seeding / Germination</option>
+        <option value="vegetative">🌿 Vegetative</option>
+        <option value="flowering">🌸 Flowering</option>
+        <option value="fruit">🍅 Fruit / Grain Development</option>
+        <option value="maturing">🌾 Maturing / Ripening</option>
+        <option value="harvest">✂️ Ready to Harvest</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Field ID / Location</label>
+      <input class="form-input" type="text" id="cropFieldId" placeholder="e.g. North-Field-1" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('cropModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCrop()">💾 Save Crop</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Animal Modal -->
+<div class="modal-overlay" id="animalModal" onclick="closeModalOverlay(event, 'animalModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🐄 Add Animal / Herd</div>
+      <button class="modal-close" onclick="closeModal('animalModal')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Animal ID / Name</label>
+        <input class="form-input" type="text" id="animalId" placeholder="e.g. COW-042" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Species</label>
+        <select class="form-select" id="animalSpecies">
+          <option value="cattle">🐄 Cattle / Cow</option>
+          <option value="buffalo">🐃 Buffalo</option>
+          <option value="poultry">🐔 Poultry / Chicken</option>
+          <option value="goat">🐐 Goat</option>
+          <option value="sheep">🐑 Sheep</option>
+          <option value="pig">🐷 Pig</option>
+          <option value="fish">🐟 Fish / Aquaculture</option>
+          <option value="other">🦙 Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Age / Stage</label>
+        <input class="form-input" type="text" id="animalAge" placeholder="e.g. 2 years, Juvenile" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Herd / Group Size</label>
+        <input class="form-input" type="number" id="animalCount" placeholder="e.g. 12" />
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:14px;">💊 Add Medicine (optional)</div>
+
+    <div class="form-group">
+      <label class="form-label">Medicine Given</label>
+      <select class="form-select" id="animalMed">
+        <option value="">— None —</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Dosage</label>
+        <input class="form-input" type="text" id="animalMedDose" placeholder="e.g. 10 mg/kg" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Treatment Date</label>
+        <input class="form-input" type="date" id="animalMedDate" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="animalNotes" placeholder="Treatment reason, vet name…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('animalModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAnimal()">💾 Save Animal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal-overlay" id="addUserModal" onclick="closeModalOverlay(event, 'addUserModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👥 Add New User</div>
+      <button class="modal-close" onclick="closeModal('addUserModal')">✕</button>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" type="text" id="addUserName" placeholder="Unique username" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" type="text" id="addUserFullName" placeholder="e.g. John Doe" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <select class="form-select" id="addUserRole">
+          <option value="farmer">Farmer</option>
+          <option value="agronomist">Agronomist</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="addUserEmail" placeholder="Optional" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Farm/Org Name</label>
+        <input class="form-input" type="text" id="addUserFarmName" placeholder="Optional" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Temporary Password</label>
+      <input class="form-input" type="password" id="addUserPwd" placeholder="Min. 6 chars" />
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUser()">💾 Add User</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="api-client.js"></script>
+<script src="app.js"></script>
+
+
+
+</body>
+</html>

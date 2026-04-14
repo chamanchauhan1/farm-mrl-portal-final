@@ -1,0 +1,41 @@
+[
+  {
+    "id": "_1b9ctrw",
+    "name": "Wheat",
+    "variety": "HD-2967",
+    "area": "5.2 acres",
+    "plantDate": "2026-02-04",
+    "harvestDate": "2026-05-05",
+    "stage": "maturing",
+    "fieldId": "North-Field-A",
+    "userId": "user_farmer1",
+    "userName": "Ravi Kumar",
+    "createdAt": "2026-04-05T06:17:03.809Z"
+  },
+  {
+    "id": "_fugnn3z",
+    "name": "Tomato",
+    "variety": "Hybrid-Cherry",
+    "area": "1.8 acres",
+    "plantDate": "2026-02-19",
+    "harvestDate": "2026-05-20",
+    "stage": "fruit",
+    "fieldId": "Greenhouse-1",
+    "userId": "user_farmer1",
+    "userName": "Ravi Kumar",
+    "createdAt": "2026-04-05T06:17:03.809Z"
+  },
+  {
+    "id": "_kba64a0",
+    "name": "Soybean",
+    "variety": "JS-335",
+    "area": "3.0 acres",
+    "plantDate": "2026-03-06",
+    "harvestDate": "2026-06-04",
+    "stage": "flowering",
+    "fieldId": "South-Plot-B",
+    "userId": "user_farmer2",
+    "userName": "Priya Singh",
+    "createdAt": "2026-04-05T06:17:03.809Z"
+  }
+]
