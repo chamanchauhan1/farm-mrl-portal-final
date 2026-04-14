@@ -1,21 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Farm MRL Portal — Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --green-400: #4ade80; --green-500: #22c55e; --green-600: #16a34a;
-      --amber: #fbbf24; --red: #ef4444; --blue: #60a5fa;
-      --bg: #060d0a; --surface: #0d1a12; --card: #111f16;
-      --elevated: #1a2e20; --input: #0f1a13;
-      --border: rgba(34,197,94,0.14); --border-h: rgba(34,197,94,0.3); --focus: rgba(34,197,94,0.6);
-      --text: #f0fdf4; --muted: #4b7a5a; --dim: #2d4a36;
-      --accent: #22c55e; --glow: rgba(34,197,94,0.2);
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
+
+    :root {
+      --green-400: #4ade80;
+      --green-500: #22c55e;
+      --green-600: #16a34a;
+      --amber: #fbbf24;
+      --red: #ef4444;
+      --blue: #60a5fa;
+      --bg: #060d0a;
+      --surface: #0d1a12;
+      --card: #111f16;
+      --elevated: #1a2e20;
+      --input: #0f1a13;
+      --border: rgba(34, 197, 94, 0.14);
+      --border-h: rgba(34, 197, 94, 0.3);
+      --focus: rgba(34, 197, 94, 0.6);
+      --text: #f0fdf4;
+      --muted: #4b7a5a;
+      --dim: #2d4a36;
+      --accent: #22c55e;
+      --glow: rgba(34, 197, 94, 0.2);
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
@@ -27,21 +49,31 @@
       overflow: hidden;
       position: relative;
     }
+
     /* Animated background */
     body::before {
       content: '';
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background:
-        radial-gradient(ellipse at 10% 20%, rgba(34,197,94,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 90% 80%, rgba(34,197,94,0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(34,197,94,0.03) 0%, transparent 70%);
+        radial-gradient(ellipse at 10% 20%, rgba(34, 197, 94, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(34, 197, 94, 0.03) 0%, transparent 70%);
       animation: bgPulse 8s ease-in-out infinite alternate;
       pointer-events: none;
     }
+
     @keyframes bgPulse {
-      from { opacity: 0.8; }
-      to { opacity: 1.2; transform: scale(1.05); }
+      from {
+        opacity: 0.8;
+      }
+
+      to {
+        opacity: 1.2;
+        transform: scale(1.05);
+      }
     }
+
     /* Floating particles */
     .particle {
       position: fixed;
@@ -51,390 +83,680 @@
       pointer-events: none;
       user-select: none;
     }
+
     @keyframes float {
-      0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-      10%  { opacity: 0.07; }
-      90%  { opacity: 0.07; }
-      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+      0% {
+        transform: translateY(110vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.07;
+      }
+
+      90% {
+        opacity: 0.07;
+      }
+
+      100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+      }
     }
+
     /* Card */
     .auth-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 40px 44px;
-      width: 100%; max-width: 440px;
+      width: 100%;
+      max-width: 440px;
       position: relative;
       z-index: 1;
-      box-shadow: 0 8px 48px rgba(0,0,0,0.6), 0 0 0 1px var(--border), 0 0 60px rgba(34,197,94,0.05);
-      animation: cardIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 8px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border), 0 0 60px rgba(34, 197, 94, 0.05);
+      animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    @keyframes cardIn { from { opacity:0; transform:scale(0.9) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
     /* Logo */
-    .logo { display:flex; align-items:center; gap:14px; margin-bottom:32px; }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
     .logo-icon {
-      width:52px; height:52px;
+      width: 52px;
+      height: 52px;
       background: linear-gradient(135deg, #22c55e, #16a34a);
-      border-radius:15px;
-      display:flex; align-items:center; justify-content:center;
-      font-size:26px;
-      box-shadow: 0 4px 20px rgba(34,197,94,0.35);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.35);
     }
-    .logo-text { flex:1; }
-    .logo-title { font-size:18px; font-weight:800; letter-spacing:-0.5px; }
-    .logo-sub { font-size:12px; color:var(--muted); margin-top:1px; }
+
+    .logo-text {
+      flex: 1;
+    }
+
+    .logo-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
     /* Tabs */
-    .auth-tabs { display:flex; background:var(--input); border:1px solid var(--border); border-radius:10px; padding:3px; margin-bottom:28px; }
-    .auth-tab {
-      flex:1; padding:9px; text-align:center;
-      font-size:13px; font-weight:500; cursor:pointer;
-      border-radius:8px; color:var(--muted);
-      transition: all 0.2s; user-select:none;
+    .auth-tabs {
+      display: flex;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 28px;
     }
-    .auth-tab.active { background:var(--accent); color:white; font-weight:600; box-shadow:0 2px 10px rgba(34,197,94,0.4); }
+
+    .auth-tab {
+      flex: 1;
+      padding: 9px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 8px;
+      color: var(--muted);
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .auth-tab.active {
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+    }
+
     /* Form */
-    .form-panel { display:none; animation: fadeUp 0.3s ease; }
-    .form-panel.active { display:block; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-    .form-group { margin-bottom:16px; }
-    .form-label { display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:7px; }
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .form-input, .form-select {
-      width:100%;
-      background:var(--input);
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:11px 14px;
-      font-size:14px; font-family:'Inter',sans-serif;
-      color:var(--text);
-      outline:none;
+    .form-panel {
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .form-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 7px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      outline: none;
       transition: all 0.2s;
     }
-    .form-input:focus, .form-select:focus { border-color:var(--focus); box-shadow:0 0 0 3px var(--glow); background:var(--surface); }
-    .form-input::placeholder { color:var(--dim); }
-    .form-select option { background:var(--card); }
-    /* Password toggle */
-    .input-wrap { position:relative; }
-    .input-wrap .form-input { padding-right:44px; }
-    .pwd-toggle {
-      position:absolute; right:12px; top:50%; transform:translateY(-50%);
-      background:none; border:none; color:var(--muted); cursor:pointer;
-      font-size:16px; padding:4px; transition:color 0.2s;
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px var(--glow);
+      background: var(--surface);
     }
-    .pwd-toggle:hover { color:var(--accent); }
+
+    .form-input::placeholder {
+      color: var(--dim);
+    }
+
+    .form-select option {
+      background: var(--card);
+    }
+
+    /* Password toggle */
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .form-input {
+      padding-right: 44px;
+    }
+
+    .pwd-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .pwd-toggle:hover {
+      color: var(--accent);
+    }
+
     /* Submit button */
     .btn-submit {
-      width:100%; padding:13px;
-      background:var(--accent);
-      color:white; font-size:15px; font-weight:700;
-      font-family:'Inter',sans-serif;
-      border:none; border-radius:10px;
-      cursor:pointer; margin-top:8px;
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
       transition: all 0.2s;
-      box-shadow: 0 4px 16px rgba(34,197,94,0.35);
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
     }
-    .btn-submit:hover { background:#4ade80; box-shadow:0 6px 24px rgba(34,197,94,0.5); transform:translateY(-1px); }
-    .btn-submit:active { transform:translateY(0); }
-    .btn-submit:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+    .btn-submit:hover {
+      background: #4ade80;
+      box-shadow: 0 6px 24px rgba(34, 197, 94, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     /* Quick login */
-    .quick-login { margin-top:24px; border-top:1px solid var(--border); padding-top:20px; }
-    .quick-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:12px; text-align:center; }
-    .quick-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .quick-login {
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    .quick-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .quick-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
     .quick-btn {
-      padding:10px 12px;
-      background:var(--input); border:1px solid var(--border);
-      border-radius:10px; cursor:pointer; text-align:left;
-      transition:all 0.2s; font-family:'Inter',sans-serif;
+      padding: 10px 12px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
     }
-    .quick-btn:hover { border-color:var(--border-h); background:var(--elevated); }
-    .quick-btn-name { font-size:12px; font-weight:600; color:var(--text); }
-    .quick-btn-role { font-size:10px; color:var(--muted); margin-top:1px; }
+
+    .quick-btn:hover {
+      border-color: var(--border-h);
+      background: var(--elevated);
+    }
+
+    .quick-btn-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .quick-btn-role {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
     .role-badge {
-      display:inline-block; padding:1px 6px; border-radius:99px;
-      font-size:9px; font-weight:700; text-transform:uppercase;
-      margin-top:4px;
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 99px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 4px;
     }
-    .role-admin { background:rgba(239,68,68,0.15); color:#f87171; }
-    .role-farmer { background:rgba(34,197,94,0.15); color:#4ade80; }
-    .role-agronomist { background:rgba(96,165,250,0.15); color:#60a5fa; }
+
+    .role-admin {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+    }
+
+    .role-farmer {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+    }
+
+    .role-agronomist {
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
+    }
+
     /* Error/Success messages */
-    .msg { padding:12px 16px; border-radius:10px; font-size:13px; margin-bottom:16px; display:none; align-items:center; gap:10px; }
-    .msg.show { display:flex; animation:fadeUp 0.3s ease; }
-    .msg-error { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); color:#f87171; }
-    .msg-success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.25); color:#4ade80; }
+    .msg {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .msg.show {
+      display: flex;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .msg-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+    }
+
+    .msg-success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      color: #4ade80;
+    }
+
     /* Loading spinner */
-    .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     /* Testimonial */
-    .feature-list { display:flex; flex-direction:column; gap:8px; margin-top:20px; }
-    .feature-item { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
-    .feature-item::before { content:'✓'; color:var(--accent); font-weight:700; font-size:13px; flex-shrink:0; }
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .feature-item::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
     /* Scrollbar */
-    ::-webkit-scrollbar { width:4px; }
-    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 99px;
+    }
+
     /* Mouse Chaser */
     .mouse-chaser {
-      position: fixed; top: 0; left: 0;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--accent); pointer-events: none;
-      z-index: 9999; transform: translate(-50%, -50%);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
       transition: transform 0.2s, opacity 0.2s;
-      mix-blend-mode: screen; box-shadow: 0 0 12px var(--accent);
+      mix-blend-mode: screen;
+      box-shadow: 0 0 12px var(--accent);
     }
   </style>
 </head>
+
 <body>
 
-<!-- Floating particles -->
-<script>
-['🌿','🌾','🐄','🧪','🌱','🍃','🐔','🐑'].forEach((e,i)=>{
-  const p=document.createElement('div'); p.className='particle'; p.textContent=e;
-  p.style.cssText=`left:${Math.random()*100}%;animation-delay:${Math.random()*15}s;animation-duration:${12+Math.random()*8}s;font-size:${12+Math.random()*12}px;`;
-  document.body.appendChild(p);
-});
-</script>
+  <!-- Floating particles -->
+  <script>
+    ['🌿', '🌾', '🐄', '🧪', '🌱', '🍃', '🐔', '🐑'].forEach((e, i) => {
+      const p = document.createElement('div'); p.className = 'particle'; p.textContent = e;
+      p.style.cssText = `left:${Math.random() * 100}%;animation-delay:${Math.random() * 15}s;animation-duration:${12 + Math.random() * 8}s;font-size:${12 + Math.random() * 12}px;`;
+      document.body.appendChild(p);
+    });
+  </script>
 
-<div class="auth-card">
-  <!-- Logo -->
-  <div class="logo">
-    <div class="logo-icon">🌿</div>
-    <div class="logo-text">
-      <div class="logo-title">Farm MRL Portal</div>
-      <div class="logo-sub">Chemical Safety Platform v2.0</div>
+  <div class="auth-card">
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">
+        <div class="logo-title">Farm MRL Portal</div>
+        <div class="logo-sub">Chemical Safety Platform v2.0</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab" id="tabRegister" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <!-- Error/Success messages -->
+    <div class="msg msg-error" id="errMsg"><span>⚠️</span><span id="errText"></span></div>
+    <div class="msg msg-success" id="okMsg"><span>✅</span><span id="okText"></span></div>
+
+    <!-- LOGIN FORM -->
+    <div class="form-panel active" id="panelLogin">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" id="loginUser" placeholder="Enter your username"
+          autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="loginPass" placeholder="Enter your password"
+            autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
+          <button class="pwd-toggle" type="button" onclick="togglePwd('loginPass',this)">👁</button>
+        </div>
+      </div>
+      <button class="btn-submit" id="loginBtn" onclick="doLogin()">Sign In →</button>
+
+      <!-- Quick Login Buttons -->
+      <div class="quick-login">
+        <div class="quick-title">Quick Sign In (Demo)</div>
+        <div class="quick-btns">
+          <button class="quick-btn" onclick="quickLogin('admin','admin123')">
+            <div class="quick-btn-name">👨‍💼 Admin</div>
+            <div class="quick-btn-role">admin / admin123</div>
+            <div class="role-badge role-admin">Admin</div>
+          </button>
+          <button class="quick-btn" onclick="quickLogin('farmer1','farmer123')">
+            <div class="quick-btn-name">👨‍🌾 Ravi Kumar</div>
+            <div class="quick-btn-role">farmer1 / farmer123</div>
+            <div class="role-badge role-farmer">Farmer</div>
+          </button>
+          <button class="quick-btn" onclick="quickLogin('farmer2','farmer123')">
+            <div class="quick-btn-name">👩‍🌾 Priya Singh</div>
+            <div class="quick-btn-role">farmer2 / farmer123</div>
+            <div class="role-badge role-farmer">Farmer</div>
+          </button>
+          <button class="quick-btn" onclick="quickLogin('agronomist','agro123')">
+            <div class="quick-btn-name">👨‍🔬 Dr. Sharma</div>
+            <div class="quick-btn-role">agronomist / agro123</div>
+            <div class="role-badge role-agronomist">Expert</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature-item">Track MRL compliance for 22+ chemicals</div>
+        <div class="feature-item">Data-driven safety recommendations</div>
+        <div class="feature-item">Multi-user farm management</div>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="form-panel" id="panelRegister">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name *</label>
+          <input class="form-input" type="text" id="regName" placeholder="Your full name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username *</label>
+          <input class="form-input" type="text" id="regUser" placeholder="Choose username" autocomplete="username" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password * (min. 6 chars)</label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="regPass" placeholder="Create a strong password"
+            autocomplete="new-password" />
+          <button class="pwd-toggle" type="button" onclick="togglePwd('regPass',this)">👁</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Farm Name</label>
+          <input class="form-input" type="text" id="regFarm" placeholder="e.g. Kumar Farms" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Type</label>
+          <select class="form-select" id="regRole">
+            <option value="farmer">🌾 Farmer</option>
+            <option value="agronomist">🔬 Agronomist</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email (optional)</label>
+        <input class="form-input" type="email" id="regEmail" placeholder="your@email.com" />
+      </div>
+      <button class="btn-submit" id="regBtn" onclick="doRegister()">Create Account →</button>
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="auth-tabs">
-    <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</div>
-    <div class="auth-tab" id="tabRegister" onclick="switchTab('register')">Register</div>
-  </div>
+  <script>
+    const API = '';
 
-  <!-- Error/Success messages -->
-  <div class="msg msg-error" id="errMsg"><span>⚠️</span><span id="errText"></span></div>
-  <div class="msg msg-success" id="okMsg"><span>✅</span><span id="okText"></span></div>
-
-  <!-- LOGIN FORM -->
-  <div class="form-panel active" id="panelLogin">
-    <div class="form-group">
-      <label class="form-label">Username</label>
-      <input class="form-input" type="text" id="loginUser" placeholder="Enter your username" autocomplete="username" />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <div class="input-wrap">
-        <input class="form-input" type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
-        <button class="pwd-toggle" type="button" onclick="togglePwd('loginPass',this)">👁</button>
-      </div>
-    </div>
-    <button class="btn-submit" id="loginBtn" onclick="doLogin()">Sign In →</button>
-
-    <!-- Quick Login Buttons -->
-    <div class="quick-login">
-      <div class="quick-title">Quick Sign In (Demo)</div>
-      <div class="quick-btns">
-        <button class="quick-btn" onclick="quickLogin('admin','admin123')">
-          <div class="quick-btn-name">👨‍💼 Admin</div>
-          <div class="quick-btn-role">admin / admin123</div>
-          <div class="role-badge role-admin">Admin</div>
-        </button>
-        <button class="quick-btn" onclick="quickLogin('farmer1','farmer123')">
-          <div class="quick-btn-name">👨‍🌾 Ravi Kumar</div>
-          <div class="quick-btn-role">farmer1 / farmer123</div>
-          <div class="role-badge role-farmer">Farmer</div>
-        </button>
-        <button class="quick-btn" onclick="quickLogin('farmer2','farmer123')">
-          <div class="quick-btn-name">👩‍🌾 Priya Singh</div>
-          <div class="quick-btn-role">farmer2 / farmer123</div>
-          <div class="role-badge role-farmer">Farmer</div>
-        </button>
-        <button class="quick-btn" onclick="quickLogin('agronomist','agro123')">
-          <div class="quick-btn-name">👨‍🔬 Dr. Sharma</div>
-          <div class="quick-btn-role">agronomist / agro123</div>
-          <div class="role-badge role-agronomist">Expert</div>
-        </button>
-      </div>
-    </div>
-
-    <div class="feature-list">
-      <div class="feature-item">Track MRL compliance for 22+ chemicals</div>
-      <div class="feature-item">Data-driven safety recommendations</div>
-      <div class="feature-item">Multi-user farm management</div>
-    </div>
-  </div>
-
-  <!-- REGISTER FORM -->
-  <div class="form-panel" id="panelRegister">
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Full Name *</label>
-        <input class="form-input" type="text" id="regName" placeholder="Your full name" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Username *</label>
-        <input class="form-input" type="text" id="regUser" placeholder="Choose username" autocomplete="username" />
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Password * (min. 6 chars)</label>
-      <div class="input-wrap">
-        <input class="form-input" type="password" id="regPass" placeholder="Create a strong password" autocomplete="new-password"/>
-        <button class="pwd-toggle" type="button" onclick="togglePwd('regPass',this)">👁</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Farm Name</label>
-        <input class="form-input" type="text" id="regFarm" placeholder="e.g. Kumar Farms" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Account Type</label>
-        <select class="form-select" id="regRole">
-          <option value="farmer">🌾 Farmer</option>
-          <option value="agronomist">🔬 Agronomist</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email (optional)</label>
-      <input class="form-input" type="email" id="regEmail" placeholder="your@email.com" />
-    </div>
-    <button class="btn-submit" id="regBtn" onclick="doRegister()">Create Account →</button>
-  </div>
-</div>
-
-<script>
-  const API = '';
-
-  function switchTab(t) {
-    document.getElementById('tabLogin').classList.toggle('active', t==='login');
-    document.getElementById('tabRegister').classList.toggle('active', t==='register');
-    document.getElementById('panelLogin').classList.toggle('active', t==='login');
-    document.getElementById('panelRegister').classList.toggle('active', t==='register');
-    hideMsg();
-  }
-
-  function showErr(msg) {
-    document.getElementById('errText').textContent = msg;
-    document.getElementById('errMsg').classList.add('show');
-    document.getElementById('okMsg').classList.remove('show');
-  }
-  function showOk(msg) {
-    document.getElementById('okText').textContent = msg;
-    document.getElementById('okMsg').classList.add('show');
-    document.getElementById('errMsg').classList.remove('show');
-  }
-  function hideMsg() {
-    document.getElementById('errMsg').classList.remove('show');
-    document.getElementById('okMsg').classList.remove('show');
-  }
-
-  function togglePwd(id, btn) {
-    const el = document.getElementById(id);
-    const show = el.type === 'password';
-    el.type = show ? 'text' : 'password';
-    btn.textContent = show ? '🙈' : '👁';
-  }
-
-  function setLoading(btnId, loading) {
-    const btn = document.getElementById(btnId);
-    btn.disabled = loading;
-    btn.innerHTML = loading ? '<div class="spinner"></div>' : btn.dataset.label || btn.textContent;
-    if (!btn.dataset.label) btn.dataset.label = btn.textContent;
-  }
-
-  async function doLogin() {
-    hideMsg();
-    const username = document.getElementById('loginUser').value.trim();
-    const password = document.getElementById('loginPass').value;
-    if (!username || !password) { showErr('Please enter username and password'); return; }
-    setLoading('loginBtn', true);
-    try {
-      const res = await fetch(API + '/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      if (!res.ok) { showErr(data.error || 'Login failed'); return; }
-      localStorage.setItem('fmrl_token', data.token);
-      localStorage.setItem('fmrl_user', JSON.stringify(data.user));
-      showOk('Welcome back, ' + data.user.name + '! Redirecting…');
-      setTimeout(() => { window.location.href = 'index.html'; }, 800);
-    } catch (e) {
-      showErr('Cannot connect to server. Make sure the server is running on port 3000.');
-    } finally { setLoading('loginBtn', false); }
-  }
-
-  async function doRegister() {
-    hideMsg();
-    const name = document.getElementById('regName').value.trim();
-    const username = document.getElementById('regUser').value.trim();
-    const password = document.getElementById('regPass').value;
-    const farmName = document.getElementById('regFarm').value.trim();
-    const role = document.getElementById('regRole').value;
-    const email = document.getElementById('regEmail').value.trim();
-    if (!name || !username || !password) { showErr('Name, username, and password are required'); return; }
-    if (password.length < 6) { showErr('Password must be at least 6 characters'); return; }
-    setLoading('regBtn', true);
-    try {
-      const res = await fetch(API + '/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, username, password, farmName, role, email })
-      });
-      const data = await res.json();
-      if (!res.ok) { showErr(data.error || 'Registration failed'); return; }
-      localStorage.setItem('fmrl_token', data.token);
-      localStorage.setItem('fmrl_user', JSON.stringify(data.user));
-      showOk('Account created! Welcome, ' + data.user.name + '! Redirecting…');
-      setTimeout(() => { window.location.href = 'index.html'; }, 800);
-    } catch (e) {
-      showErr('Cannot connect to server. Make sure the server is running on port 3000.');
-    } finally { setLoading('regBtn', false); }
-  }
-
-  function quickLogin(user, pass) {
-    document.getElementById('loginUser').value = user;
-    document.getElementById('loginPass').value = pass;
-    doLogin();
-  }
-
-  // If already logged in, redirect
-  if (localStorage.getItem('fmrl_token')) {
-    window.location.href = 'index.html';
-  }
-
-  // Mouse Chaser Logic
-  const chaser = document.createElement('div');
-  chaser.className = 'mouse-chaser';
-  document.body.appendChild(chaser);
-
-  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-  let chaserX = mouseX, chaserY = mouseY;
-  window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-
-  function animateChaser() {
-    chaserX += (mouseX - chaserX) * 0.15;
-    chaserY += (mouseY - chaserY) * 0.15;
-    chaser.style.left = chaserX + 'px';
-    chaser.style.top = chaserY + 'px';
-    requestAnimationFrame(animateChaser);
-  }
-  animateChaser();
-
-  document.body.addEventListener('mouseover', (e) => {
-    if (e.target.closest('button, input, select, .auth-tab, .quick-btn')) {
-      chaser.style.transform = 'translate(-50%, -50%) scale(1.5)';
-      chaser.style.opacity = '0.5';
+    function switchTab(t) {
+      document.getElementById('tabLogin').classList.toggle('active', t === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', t === 'register');
+      document.getElementById('panelLogin').classList.toggle('active', t === 'login');
+      document.getElementById('panelRegister').classList.toggle('active', t === 'register');
+      hideMsg();
     }
-  });
-  document.body.addEventListener('mouseout', (e) => {
-    if (e.target.closest('button, input, select, .auth-tab, .quick-btn')) {
-      chaser.style.transform = 'translate(-50%, -50%) scale(1)';
-      chaser.style.opacity = '1';
+
+    function showErr(msg) {
+      document.getElementById('errText').textContent = msg;
+      document.getElementById('errMsg').classList.add('show');
+      document.getElementById('okMsg').classList.remove('show');
     }
-  });
-</script>
+    function showOk(msg) {
+      document.getElementById('okText').textContent = msg;
+      document.getElementById('okMsg').classList.add('show');
+      document.getElementById('errMsg').classList.remove('show');
+    }
+    function hideMsg() {
+      document.getElementById('errMsg').classList.remove('show');
+      document.getElementById('okMsg').classList.remove('show');
+    }
+
+    function togglePwd(id, btn) {
+      const el = document.getElementById(id);
+      const show = el.type === 'password';
+      el.type = show ? 'text' : 'password';
+      btn.textContent = show ? '🙈' : '👁';
+    }
+
+    function setLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      btn.disabled = loading;
+      btn.innerHTML = loading ? '<div class="spinner"></div>' : btn.dataset.label || btn.textContent;
+      if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+    }
+
+    async function doLogin() {
+      hideMsg();
+      const username = document.getElementById('loginUser').value.trim();
+      const password = document.getElementById('loginPass').value;
+      if (!username || !password) { showErr('Please enter username and password'); return; }
+      setLoading('loginBtn', true);
+      try {
+        const res = await fetch(API + '/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (!res.ok) { showErr(data.error || 'Login failed'); return; }
+        localStorage.setItem('fmrl_token', data.token);
+        localStorage.setItem('fmrl_user', JSON.stringify(data.user));
+        showOk('Welcome back, ' + data.user.name + '! Redirecting…');
+        setTimeout(() => { window.location.href = 'index.html'; }, 800);
+      } catch (e) {
+        showErr('Cannot connect to server. Make sure the server is running on port 3000.');
+      } finally { setLoading('loginBtn', false); }
+    }
+
+    async function doRegister() {
+      hideMsg();
+      const name = document.getElementById('regName').value.trim();
+      const username = document.getElementById('regUser').value.trim();
+      const password = document.getElementById('regPass').value;
+      const farmName = document.getElementById('regFarm').value.trim();
+      const role = document.getElementById('regRole').value;
+      const email = document.getElementById('regEmail').value.trim();
+      if (!name || !username || !password) { showErr('Name, username, and password are required'); return; }
+      if (password.length < 6) { showErr('Password must be at least 6 characters'); return; }
+      setLoading('regBtn', true);
+      try {
+        const res = await fetch(API + '/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, username, password, farmName, role, email })
+        });
+        const data = await res.json();
+        if (!res.ok) { showErr(data.error || 'Registration failed'); return; }
+        localStorage.setItem('fmrl_token', data.token);
+        localStorage.setItem('fmrl_user', JSON.stringify(data.user));
+        showOk('Account created! Welcome, ' + data.user.name + '! Redirecting…');
+        setTimeout(() => { window.location.href = 'index.html'; }, 800);
+      } catch (e) {
+        showErr('Cannot connect to server. Make sure the server is running on port 3000.');
+      } finally { setLoading('regBtn', false); }
+    }
+
+    function quickLogin(user, pass) {
+      document.getElementById('loginUser').value = user;
+      document.getElementById('loginPass').value = pass;
+      doLogin();
+    }
+
+    // If already logged in, redirect
+    if (localStorage.getItem('fmrl_token')) {
+      window.location.href = 'index.html';
+    }
+
+    // Mouse Chaser Logic
+    const chaser = document.createElement('div');
+    chaser.className = 'mouse-chaser';
+    document.body.appendChild(chaser);
+
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let chaserX = mouseX, chaserY = mouseY;
+    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+    function animateChaser() {
+      chaserX += (mouseX - chaserX) * 0.15;
+      chaserY += (mouseY - chaserY) * 0.15;
+      chaser.style.left = chaserX + 'px';
+      chaser.style.top = chaserY + 'px';
+      requestAnimationFrame(animateChaser);
+    }
+    animateChaser();
+
+    document.body.addEventListener('mouseover', (e) => {
+      if (e.target.closest('button, input, select, .auth-tab, .quick-btn')) {
+        chaser.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        chaser.style.opacity = '0.5';
+      }
+    });
+    document.body.addEventListener('mouseout', (e) => {
+      if (e.target.closest('button, input, select, .auth-tab, .quick-btn')) {
+        chaser.style.transform = 'translate(-50%, -50%) scale(1)';
+        chaser.style.opacity = '1';
+      }
+    });
+  </script>
 </body>
+
 </html>
