@@ -616,6 +616,10 @@ function filterEncyclopedia() {
         </div>
         ${c.notes?`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">📌 ${c.notes}</div>`:''}
         ${c.alternatives.length?`<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">🌿 Alt: ${c.alternatives.join(', ')}</div>`:''}
+        <div style="margin-top:10px;display:flex;gap:8px;">
+          <a href="https://www.google.com/search?q=buy+${encodeURIComponent(c.name)}+agricultural" target="_blank" class="btn btn-primary btn-sm" style="font-size:10px;padding:4px 8px;text-decoration:none;">🛒 Buy Online</a>
+          <a href="https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(c.name)}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:10px;padding:4px 8px;text-decoration:none;">ℹ️ Info</a>
+        </div>
       </div>
       <div style="text-align:right;margin-left:auto;flex-shrink:0;">
         <div class="enc-limit">${c.mrl} ${c.unit}</div>

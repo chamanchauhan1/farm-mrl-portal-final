@@ -1,13 +1,34 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Farm MRL Portal — Track chemical usage, ensure MRL compliance, and manage crops & livestock with data-driven safety recommendations." />
   <title>Farm MRL Portal — Smart Chemical Safety Platform</title>
   <link rel="stylesheet" href="styles.css" />
+<style>
+/* Hide Google Translate Banner and Tooltips */
+.goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
+body { top: 0px !important; }
+.goog-tooltip { display: none !important; }
+.goog-tooltip:hover { display: none !important; }
+.goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+#google_translate_element { display: none; }
+</style>
 </head>
 <body>
+
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'hi,pa,ta,te,kn,ml,bn,mr,en',
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <!-- Toast notifications -->
 <div class="toast-container" id="toastContainer"></div>
@@ -114,6 +135,9 @@
       </div>
 
       <div class="nav-section-label">Farm Management</div>
+      <div class="nav-item" data-page="tasks" onclick="navigate('tasks')">
+        <span class="nav-icon">✅</span> Task Board
+      </div>
       <div class="nav-item" data-page="crops" onclick="navigate('crops')">
         <span class="nav-icon">🌾</span> Crop Manager
       </div>
@@ -124,7 +148,13 @@
         <span class="nav-icon">📅</span> Harvest Calendar
       </div>
 
-      <div class="nav-section-label">Analytics</div>
+      <div class="nav-section-label">Analytics & Finances</div>
+      <div class="nav-item" data-page="inventory" onclick="navigate('inventory')">
+        <span class="nav-icon">📦</span> Inventory
+      </div>
+      <div class="nav-item" data-page="finances" onclick="navigate('finances')">
+        <span class="nav-icon">💰</span> Finances
+      </div>
       <div class="nav-item" data-page="reports" onclick="navigate('reports')">
         <span class="nav-icon">📊</span> Reports
       </div>
@@ -138,13 +168,28 @@
         <div class="score-grade" id="userNameSidebar" style="font-size:13px;">Loading…</div>
       </div>
     </div>
+    <!-- Language Selector -->
+    <div class="lang-selector-wrap">
+      <div class="lang-selector-label">🌐 <span data-i18n="language">Language</span></div>
+      <select class="lang-select" id="langSelect" onchange="switchLanguage(this.value)" title="Change Language">
+        <option value="en">🇬🇧 English</option>
+        <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+        <option value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
+        <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
+        <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+        <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+        <option value="ml">🇮🇳 മലയാളം (Malayalam)</option>
+        <option value="bn">🇮🇳 বাংলা (Bengali)</option>
+        <option value="mr">🇮🇳 मराठी (Marathi)</option>
+      </select>
+    </div>
     <!-- Footer -->
     <div class="sidebar-footer">
       <button class="footer-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">
         🌙 Dark
       </button>
       <button class="footer-btn" onclick="logout()" title="Sign out" style="color:var(--danger);">
-        🚪 Logout
+        🚪 <span data-i18n="logout">Logout</span>
       </button>
     </div>
   </aside>
@@ -186,23 +231,58 @@
         <!-- Stat Grid -->
         <div class="stat-grid" id="statGrid"></div>
 
+        <!-- Weather Widget + Quick Notes Row -->
+        <div class="grid-2 mb-4">
+          <!-- Weather Widget -->
+          <div class="weather-widget" id="weatherWidget">
+            <div class="weather-header">
+              <div class="weather-icon" id="weatherIcon">🌤️</div>
+              <div class="weather-info">
+                <div class="weather-temp" id="weatherTemp">--°C</div>
+                <div class="weather-desc" id="weatherDesc" data-i18n="loading_weather">Loading weather...</div>
+              </div>
+              <div class="weather-extra">
+                <div class="weather-detail"><span>💧</span> <span id="weatherHumidity">--%</span></div>
+                <div class="weather-detail"><span>💨</span> <span id="weatherWind">-- km/h</span></div>
+              </div>
+            </div>
+            <div class="weather-location" id="weatherLocation">
+              <span>📍</span> <span data-i18n="detecting_location">Detecting location...</span>
+            </div>
+            <div class="weather-forecast" id="weatherForecast"></div>
+            <div class="weather-tip" id="weatherTip">
+              <span>💡</span> <span data-i18n="weather_tip_default">Farm Tip: Check weather before spraying chemicals</span>
+            </div>
+          </div>
+
+          <!-- Quick Notes -->
+          <div class="card quick-notes-card">
+            <div class="card-title"><span>📝</span> <span data-i18n="quick_notes">Quick Notes</span></div>
+            <div class="quick-notes-list" id="quickNotesList"></div>
+            <div class="quick-notes-input">
+              <input class="form-input" type="text" id="quickNoteInput" placeholder="Type a quick note..." data-i18n-placeholder="note_placeholder" onkeydown="if(event.key==='Enter')addQuickNote()" />
+              <button class="btn btn-primary btn-sm" onclick="addQuickNote()">+</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Main dashboard grid -->
         <div class="grid-2">
           <!-- Recent Activity -->
           <div class="card">
-            <div class="card-title"><span>⚡</span> Recent Logs</div>
+            <div class="card-title"><span>⚡</span> <span data-i18n="recent_logs">Recent Logs</span></div>
             <div class="activity-list" id="recentActivity">
               <div class="empty-state">
                 <div class="empty-icon">📋</div>
-                <div class="empty-title">No logs yet</div>
-                <div class="empty-sub">Add your first chemical usage log</div>
+                <div class="empty-title" data-i18n="no_logs_yet">No logs yet</div>
+                <div class="empty-sub" data-i18n="add_first_log">Add your first chemical usage log</div>
               </div>
             </div>
           </div>
 
           <!-- Alert Summary -->
           <div class="card">
-            <div class="card-title"><span>🔔</span> Active Alerts</div>
+            <div class="card-title"><span>🔔</span> <span data-i18n="active_alerts">Active Alerts</span></div>
             <div id="alertSummaryList"></div>
           </div>
         </div>
@@ -210,12 +290,12 @@
         <div class="mt-4 grid-2">
           <!-- Compliance snapshot -->
           <div class="chart-wrapper">
-            <div class="card-title" style="margin-bottom:12px"><span>📊</span> MRL Compliance Overview</div>
+            <div class="card-title" style="margin-bottom:12px"><span>📊</span> <span data-i18n="mrl_compliance">MRL Compliance Overview</span></div>
             <canvas id="dashPieChart"></canvas>
           </div>
           <!-- Weekly trend -->
           <div class="chart-wrapper">
-            <div class="card-title" style="margin-bottom:12px"><span>📈</span> Usage Trend (7 days)</div>
+            <div class="card-title" style="margin-bottom:12px"><span>📈</span> <span data-i18n="usage_trend">Usage Trend (7 days)</span></div>
             <canvas id="dashLineChart"></canvas>
           </div>
         </div>
@@ -636,6 +716,7 @@
             <button class="chart-period-btn" onclick="setPeriod('30d', this)">30D</button>
             <button class="chart-period-btn" onclick="setPeriod('90d', this)">90D</button>
             <button class="btn btn-secondary btn-sm" onclick="exportCSV()">📤 CSV</button>
+            <button class="btn btn-secondary btn-sm" onclick="printReport()">🖨️ <span data-i18n="print">Print</span></button>
           </div>
         </div>
 
@@ -692,6 +773,88 @@
         </div>
       </div>
 
+      <!-- ══════════════════════════════════════
+           PAGE: INVENTORY
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-inventory">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Inventory & Stock</div>
+            <div class="section-sub">Manage your chemical and medicine stock levels</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('inventoryModal')">+ Add Stock</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Current Stock</th>
+                <th>Status</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">No inventory items yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: FINANCES
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-finances">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Farm Expenses</div>
+            <div class="section-sub">Track chemical and medicine costs</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('expenseModal')">+ Log Expense</button>
+        </div>
+        <div class="grid-2 mb-4">
+          <div class="card">
+            <div class="card-title"><span>💰</span> Total Spent This Month</div>
+            <div style="font-size:32px;font-weight:800;color:var(--accent);">$0.00</div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span>📈</span> Cost Breakdown</div>
+            <div style="color:var(--text-muted);font-size:13px;padding:20px;text-align:center;">No data to show</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PAGE: TASK BOARD
+      ══════════════════════════════════════ -->
+      <div class="page" id="page-tasks">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Task Board</div>
+            <div class="section-sub">Manage and assign farm tasks</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('taskModal')">+ New Task</button>
+        </div>
+        <div style="display:flex; gap:16px; align-items:flex-start; overflow-x:auto; padding-bottom:10px;">
+          <!-- To Do -->
+          <div class="card" style="flex:1; min-width:280px; background:var(--bg-elevated);">
+            <div class="card-title" style="margin-bottom:12px; font-size:14px;">📋 To Do</div>
+            <div id="tasksTodo" class="task-list" style="min-height:100px; display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+          <!-- In Progress -->
+          <div class="card" style="flex:1; min-width:280px; background:var(--bg-elevated);">
+            <div class="card-title" style="margin-bottom:12px; font-size:14px; color:var(--warning);">⏳ In Progress</div>
+            <div id="tasksProgress" class="task-list" style="min-height:100px; display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+          <!-- Done -->
+          <div class="card" style="flex:1; min-width:280px; background:var(--bg-elevated);">
+            <div class="card-title" style="margin-bottom:12px; font-size:14px; color:var(--safe);">✅ Done</div>
+            <div id="tasksDone" class="task-list" style="min-height:100px; display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /page-content -->
   </main>
 </div>
@@ -710,10 +873,13 @@
 
     <div class="form-group">
       <label class="form-label">Chemical / Medicine Name</label>
-      <select class="form-select" id="logChem">
-        <option value="">— Select from database —</option>
-        <option value="__custom__">✏️ Enter custom name…</option>
-      </select>
+      <div style="display:flex; gap:8px;">
+        <select class="form-select" id="logChem" style="flex:1;">
+          <option value="">— Select from database —</option>
+          <option value="__custom__">✏️ Enter custom name…</option>
+        </select>
+        <button class="btn btn-secondary" style="padding:0 12px;" onclick="openScanner()" title="Scan Barcode">📷 Scan</button>
+      </div>
     </div>
     <div class="form-group" id="logCustomChemGroup" style="display:none;">
       <label class="form-label">Custom Chemical Name</label>
@@ -951,10 +1117,67 @@
   </div>
 </div>
 
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="api-client.js"></script>
 <script src="app.js"></script>
+<script src="translations.js"></script>
+<script src="features.js"></script>
 
+<!-- Modals for new features -->
+<div class="modal-overlay" id="scannerModal" onclick="closeModalOverlay(event, 'scannerModal')">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">📷 Scan Barcode</div>
+      <button class="modal-close" onclick="closeScanner()">✕</button>
+    </div>
+    <div id="reader" style="width:100%; min-height:250px; background:#000;"></div>
+    <div class="modal-footer" style="margin-top:16px;">
+      <button class="btn btn-secondary w-full" onclick="closeScanner()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="inventoryModal" onclick="closeModalOverlay(event, 'inventoryModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📦 Add Stock</div>
+      <button class="modal-close" onclick="closeModal('inventoryModal')">✕</button>
+    </div>
+    <div class="form-group"><label class="form-label">Item Name</label><input class="form-input" type="text" placeholder="e.g. Roundup Pro"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Quantity</label><input class="form-input" type="number"/></div>
+      <div class="form-group"><label class="form-label">Unit</label><select class="form-select"><option>L</option><option>kg</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal('inventoryModal');toast('Stock added successfully','success');">💾 Save Stock</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="expenseModal" onclick="closeModalOverlay(event, 'expenseModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">💰 Log Expense</div>
+      <button class="modal-close" onclick="closeModal('expenseModal')">✕</button>
+    </div>
+    <div class="form-group"><label class="form-label">Category</label><select class="form-select"><option>Herbicides</option><option>Fertilizers</option><option>Medicines</option></select></div>
+    <div class="form-group"><label class="form-label">Amount ($)</label><input class="form-input" type="number" placeholder="0.00"/></div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal('expenseModal');toast('Expense logged','success');">💾 Save Expense</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="taskModal" onclick="closeModalOverlay(event, 'taskModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✅ New Task</div>
+      <button class="modal-close" onclick="closeModal('taskModal')">✕</button>
+    </div>
+    <div class="form-group"><label class="form-label">Task Description</label><input class="form-input" type="text" placeholder="e.g. Check irrigation lines"/></div>
+    <div class="form-group"><label class="form-label">Status</label><select class="form-select"><option>To Do</option><option>In Progress</option></select></div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal('taskModal');toast('Task added','success');">💾 Add Task</button></div>
+  </div>
+</div>
 
 
 </body>

@@ -16,6 +16,14 @@
       padding: 0;
     }
 
+    /* Hide Google Translate Banner and Tooltips */
+    .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
+    body { top: 0px !important; }
+    .goog-tooltip { display: none !important; }
+    .goog-tooltip:hover { display: none !important; }
+    .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+    #google_translate_element { display: none; }
+
     :root {
       --green-400: #4ade80;
       --green-500: #22c55e;
@@ -503,6 +511,18 @@
 
 <body>
 
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'hi,pa,ta,te,kn,ml,bn,mr,en',
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
   <!-- Floating particles -->
   <script>
     ['🌿', '🌾', '🐄', '🧪', '🌱', '🍃', '🐔', '🐑'].forEach((e, i) => {
@@ -520,6 +540,21 @@
         <div class="logo-title">Farm MRL Portal</div>
         <div class="logo-sub">Chemical Safety Platform v2.0</div>
       </div>
+    </div>
+
+    <!-- Language selector -->
+    <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:20px;">
+      <select id="langSelectLogin" onchange="loginSwitchLang(this.value)" style="background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Inter,sans-serif;cursor:pointer;outline:none;">
+        <option value="en">🇬🇧 English</option>
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
+        <option value="ta">🇮🇳 தமிழ்</option>
+        <option value="te">🇮🇳 తెలుగు</option>
+        <option value="kn">🇮🇳 ಕನ್ನಡ</option>
+        <option value="ml">🇮🇳 മലയാളം</option>
+        <option value="bn">🇮🇳 বাংলা</option>
+        <option value="mr">🇮🇳 मराठी</option>
+      </select>
     </div>
 
     <!-- Tabs -->
@@ -756,6 +791,44 @@
         chaser.style.opacity = '1';
       }
     });
+  </script>
+  <script>
+  const LOGIN_T = {
+    en:{tab_login:'Sign In',tab_reg:'Register',username:'Username',password:'Password',
+        quick:'Quick Sign In (Demo)',signin_btn:'Sign In →',create_btn:'Create Account →'},
+    hi:{tab_login:'साइन इन',tab_reg:'रजिस्टर',username:'यूज़रनेम',password:'पासवर्ड',
+        quick:'त्वरित साइन इन (डेमो)',signin_btn:'साइन इन →',create_btn:'खाता बनाएं →'},
+    pa:{tab_login:'ਸਾਈਨ ਇਨ',tab_reg:'ਰਜਿਸਟਰ',username:'ਯੂਜ਼ਰਨੇਮ',password:'ਪਾਸਵਰਡ',
+        quick:'ਤੁਰੰਤ ਸਾਈਨ ਇਨ (ਡੈਮੋ)',signin_btn:'ਸਾਈਨ ਇਨ →',create_btn:'ਖਾਤਾ ਬਣਾਓ →'},
+    ta:{tab_login:'உள்நுழை',tab_reg:'பதிவு செய்',username:'பயனர்பெயர்',password:'கடவுச்சொல்',
+        quick:'விரைவு உள்நுழைவு',signin_btn:'உள்நுழை →',create_btn:'கணக்கு உருவாக்கு →'},
+    te:{tab_login:'సైన్ ఇన్',tab_reg:'నమోదు',username:'యూజర్‌నేమ్',password:'పాస్‌వర్డ్',
+        quick:'త్వరిత సైన్ ఇన్',signin_btn:'సైన్ ఇన్ →',create_btn:'ఖాతా సృష్టించు →'},
+    kn:{tab_login:'ಸೈನ್ ಇನ್',tab_reg:'ನೋಂದಣಿ',username:'ಬಳಕೆದಾರ ಹೆಸರು',password:'ಪಾಸ್‌ವರ್ಡ್',
+        quick:'ತ್ವರಿತ ಸೈನ್ ಇನ್',signin_btn:'ಸೈನ್ ಇನ್ →',create_btn:'ಖಾತೆ ರಚಿಸಿ →'},
+    ml:{tab_login:'സൈൻ ഇൻ',tab_reg:'രജിസ്റ്റർ',username:'ഉപയോക്തൃനാമം',password:'പാസ്‌വേഡ്',
+        quick:'ദ്രുത സൈൻ ഇൻ',signin_btn:'സൈൻ ഇൻ →',create_btn:'അക്കൗണ്ട് ഉണ്ടാക്കൂ →'},
+    bn:{tab_login:'সাইন ইন',tab_reg:'নিবন্ধন',username:'ব্যবহারকারীর নাম',password:'পাসওয়ার্ড',
+        quick:'দ্রুত সাইন ইন',signin_btn:'সাইন ইন →',create_btn:'অ্যাকাউন্ট তৈরি করুন →'},
+    mr:{tab_login:'साइन इन',tab_reg:'नोंदणी',username:'वापरकर्तानाव',password:'पासवर्ड',
+        quick:'जलद साइन इन',signin_btn:'साइन इन →',create_btn:'खाते तयार करा →'},
+  };
+  function loginSwitchLang(lang) {
+    localStorage.setItem('fmrl_lang', lang);
+    const gtCombo = document.querySelector('.goog-te-combo');
+    if (gtCombo) {
+      gtCombo.value = lang === 'en' ? 'en' : lang;
+      gtCombo.dispatchEvent(new Event('change'));
+    } else {
+      setTimeout(() => loginSwitchLang(lang), 500);
+    }
+  }
+  // Restore saved lang on page load
+  const _sl = localStorage.getItem('fmrl_lang');
+  if (_sl && _sl !== 'en') {
+    const sel = document.getElementById('langSelectLogin');
+    if (sel) { sel.value = _sl; loginSwitchLang(_sl); }
+  }
   </script>
 </body>
 
